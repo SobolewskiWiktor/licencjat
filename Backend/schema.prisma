@@ -1,0 +1,215 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  Login          String  @id @default("") @db.VarChar(50)
+  Password       String  @default("") @db.VarChar(500)
+  Name           String  @default("") @db.VarChar(50)
+  Surname        String  @default("") @db.VarChar(50)
+  Title          String  @default("") @db.VarChar(50)
+  Company        String  @default("") @db.VarChar(50)
+  Phone          String  @default("") @db.VarChar(50)
+  Status         String  @default("") @db.VarChar(50)
+  Agreement      String  @default("") @db.VarChar(50)
+  BaseRestaurant String? @db.VarChar(50)
+}
+
+model advance {
+  ID      Int       @id @default(autoincrement())
+  Login   String    @default("0") @db.VarChar(50)
+  Date    DateTime? @db.Date
+  Ammount Float     @default(0)
+  Payer   String    @default("0") @db.VarChar(50)
+  Company String?   @db.VarChar(50)
+}
+
+model hours {
+  ID         Int       @id @default(autoincrement())
+  Login      String    @default("0") @db.VarChar(50)
+  Entering   String?   @db.VarChar(50)
+  Leaving    String?   @db.VarChar(50)
+  SumOfHours Float     @default(0) @db.Float
+  Date       DateTime? @db.Date
+  Type       String?   @db.VarChar(50)
+  Restaurant String    @default("0") @db.VarChar(50)
+  Company    String?   @db.VarChar(50)
+  Adder      String    @default("0") @db.VarChar(50)
+}
+
+model incomes {
+  ID             Int       @id @default(autoincrement())
+  RestaurantName String    @default("0") @db.VarChar(50)
+  Date           DateTime? @db.Date
+  Ammount        Float     @default(0)
+  Payer          String    @default("0") @db.VarChar(50)
+  Company        String?   @db.VarChar(50)
+}
+
+model lates {
+  ID        Int       @id @default(autoincrement())
+  Login     String?   @db.VarChar(50)
+  Date      DateTime? @db.Date
+  Diffrence Float?
+  Adder     String?   @db.VarChar(50)
+  Company   String?   @db.VarChar(50)
+  Presence  String?   @db.VarChar(50)
+}
+
+model logs {
+  ID         Int       @id @default(autoincrement())
+  Login      String?   @db.VarChar(50)
+  Hour       String?   @db.VarChar(50)
+  Date       DateTime? @db.Date
+  ActionType String?   @db.VarChar(50)
+  Adder      String?   @db.VarChar(50)
+  IP         String?   @db.VarChar(50)
+  ActionID   Int?
+  Company    String?   @db.VarChar(50)
+}
+
+model perrmisions {
+  ID   Int    @id @default(autoincrement())
+  Name String @default("0") @db.VarChar(50)
+}
+
+model rates {
+  ID      Int       @id @default(autoincrement())
+  Login   String    @default("0") @db.VarChar(50)
+  From    DateTime? @db.Date
+  To      DateTime? @db.Date
+  Ammount Float     @default(0)
+}
+
+model sellaries {
+  ID             Int       @id @default(autoincrement())
+  Login          String    @default("0") @db.VarChar(50)
+  Month          Int       @default(0)
+  Year           Int       @default(0)
+  Status         String    @default("0") @db.VarChar(50)
+  Ammount        Float     @default(0)
+  Payer          String    @default("0") @db.VarChar(50)
+  Company        String?   @db.VarChar(50)
+  DateOfWithdraw DateTime? @db.Date
+}
+
+model user_permisions {
+  ID     Int    @id @default(autoincrement())
+  Per_ID Int
+  Login  String @default("") @db.VarChar(50)
+}
+
+model warnings {
+  ID          Int       @id @default(autoincrement())
+  Login       String    @default("0") @db.VarChar(50)
+  Date        DateTime? @db.Date
+  Description String    @default("0") @db.VarChar(10000)
+  Adder       String    @default("0") @db.VarChar(50)
+  Company     String?   @db.VarChar(50)
+}
+
+model withdraws {
+  ID             Int       @id @default(autoincrement())
+  RestaurantName String    @default("0") @db.VarChar(50)
+  Date           DateTime? @db.Date
+  Ammount        Float     @default(0)
+  Payer          String    @default("0") @db.VarChar(50)
+  Company        String?   @db.VarChar(50)
+}
+
+model orders {
+  ID             Int       @id @default(autoincrement())
+  RestaurantName String    @default("0") @db.VarChar(50)
+  Date           DateTime? @db.Date
+  Ammount        Float     @default(0)
+  Type           String    @default("0") @db.VarChar(50)
+  Adress         String    @default("0") @db.VarChar(50)
+  Description    String    @default("0") @db.VarChar(10000)
+  Adder          String    @default("0") @db.VarChar(50)
+  Supplier       String?   @db.VarChar(50)
+  Company        String?   @db.VarChar(50)
+}
+
+model restaurants {
+  Name    String  @id @default("") @db.VarChar(50)
+  Adress  String  @default("") @db.VarChar(50)
+  Company String  @default("") @db.VarChar(50)
+  Manager String  @default("") @db.VarChar(50)
+  Phone   String? @db.VarChar(50)
+}
+
+model passwords {
+  ID       Int    @id @default(autoincrement())
+  Login    String @default("0") @db.VarChar(50)
+  Passowrd String @default("0") @db.VarChar(50)
+  Date     String @default("0") @db.VarChar(50)
+}
+
+model finances {
+  id             Int       @id @default(autoincrement())
+  RestaurantName String?   @db.VarChar(50)
+  Date           DateTime? @db.Date
+  MoneyStart     Float?
+  MoneyEnd       Float?
+  MoneyDiffrence Float?
+  SumWithdraws   Float?
+  CashRaport     Float?
+  Other          Float?
+  FV             Float?
+  CashAndFV      Float?
+  Adder          String?   @db.VarChar(50)
+  Slew           Float?
+  CardLocal      Float?
+  CardSupplier   Float?
+  Online         Float?
+  Edit           Int?      @default(0)
+}
+
+model password_history {
+  ID       Int       @id @default(autoincrement())
+  Login    String?   @default("0") @db.VarChar(50)
+  Passowrd String?   @default("0") @db.VarChar(50)
+  Date     DateTime? @db.Date
+}
+
+model canes {
+  ID          Int      @id @default(autoincrement())
+  Login       String   @default("0") @db.VarChar(50)
+  Description String   @default("0") @db.VarChar(50)
+  Ammount     Float    @default(0)
+  Date        DateTime @default(dbgenerated("('0000-00-00')")) @db.Date
+  Adder       String   @default("0") @db.VarChar(50)
+}
+
+model default_perrmisions {
+  ID           Int @id @default(autoincrement())
+  ID_permision Int @default(0)
+  GroupName    Int @default(0)
+}
+
+model rewards {
+  ID          Int      @id @default(autoincrement())
+  Login       String   @default("0") @db.VarChar(50)
+  Description String   @default("0") @db.VarChar(50)
+  Ammount     Float    @default(0)
+  Date        DateTime @default(dbgenerated("('0000-00-00')")) @db.Date
+  Adder       String   @default("0") @db.VarChar(50)
+}
+
+model benefits {
+  ID   Int     @id @default(autoincrement())
+  Name String? @db.VarChar(50)
+  Cost Float?
+}
+
+model user_benefits {
+  ID           Int     @id @default(autoincrement())
+  Name_User    String? @db.VarChar(50)
+  Name_Benefit String? @db.VarChar(50)
+  Status       String? @db.VarChar(50)
+}

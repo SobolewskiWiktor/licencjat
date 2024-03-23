@@ -1,0 +1,17 @@
+#mapContent
+{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+#mapFull
+{
+  width: 100%;
+  height: 100%;
+}
+#mapContainerFull
+{
+  width: 100%;
+  height: 100%;
+}

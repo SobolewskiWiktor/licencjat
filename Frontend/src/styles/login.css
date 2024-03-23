@@ -2,6 +2,7 @@ body
 {
     margin:0;
     padding:0; 
+    overflow: hidden;
 }
 #loginPanalContent
 {
@@ -10,23 +11,57 @@ body
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url('../../images/sergey-raikin-ZOOt4tQXe9g-unsplash.jpg');
     background-size: cover;
+    flex-direction: row;
+}
+#loginSection
+{
+    width: 30%;
+    height: 100vh;
+    display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+#loginWebpage
+{
+    width: 70%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../../images/marc-pezin-i_JUAdanGH0-unsplash.jpg');
+    background-size: cover;
 }
 #loginForm
 {
     width: 100%;
-    height: 90%;
+    height: 60%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-#futter
+.loginFormBox
 {
-    width: 100%;
+    width: 500px;
+}
+.loginFormBoxBottom
+{
+    width: 500px;
     display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+#applogo
+{
+    width: 300px;
+}
+#loginFormAndLogo
+{
+    height: 70%;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: white;
 }

@@ -1,14 +1,15 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
-
+import login from "@/views/login.vue"
+import home from "@/views/dashboard.vue"
 const routes = [
   {
     path: '/',
-    component: () => import('@/views/login.vue'),
+    component: login,
   },
   {
-    path: '/dashboard',
-    component: () => import('@/views/dashboard.vue'),
+    path: '/home',
+    component: home,
   },
 ]
 

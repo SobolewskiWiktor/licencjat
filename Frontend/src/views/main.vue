@@ -128,7 +128,7 @@
         <div id="mainViewStatisticsContentRighRight">
           <div id="mainViewStatisticsContentRightRightContent">
             <div id="mainViewStatisticsContentRightRightContentTitle">
-              <h1>Bierzące alarmy:</h1>
+              <h1>Bieżące alarmy:</h1>
             </div>
           </div>
         </div>
@@ -530,8 +530,20 @@ export default {
     setInterval(() => {
       let timeGet = new Date();
       let hours = timeGet.getHours();
+      if(hours < 10)
+      {
+        hours = `0${hours}`
+      }
       let minutes = timeGet.getMinutes();
+      if(minutes < 10)
+      {
+        minutes = `0${minutes}`
+      }
       let seconds = timeGet.getSeconds();
+      if(seconds < 10)
+      {
+        seconds = `0${seconds}`
+      }
       this.time = `${hours}:${minutes}:${seconds}`
     }, 1000);
   },

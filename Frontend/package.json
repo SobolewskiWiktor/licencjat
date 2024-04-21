@@ -12,6 +12,7 @@
     "@fawmi/vue-google-maps": "^0.9.79",
     "@mdi/font": "7.0.96",
     "apexcharts": "^3.46.0",
+    "axios": "^1.6.8",
     "chart.js": "^4.4.2",
     "core-js": "^3.29.0",
     "pinia": "^2.0.0",
@@ -19,6 +20,7 @@
     "vue": "^3.2.0",
     "vue-chartjs": "^5.3.0",
     "vue-router": "^4.0.0",
+    "vue-toastification": "^2.0.0-rc.5",
     "vue3-apexcharts": "^1.5.2",
     "vuetify": "^3.0.0"
   },

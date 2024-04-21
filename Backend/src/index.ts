@@ -23,6 +23,9 @@ app.use("/api/authorization", require("./routes/authorization"));
 app.use("/api/gethostid", require ("./routes/hostID"))
 app.use("/api/devicestatus", require ("./routes/deviceStatus"))
 app.use("/api/getactionid", require("./routes/actionID"))
+app.use("/api/users", require("./routes/users"))
+app.use("/api/devices", require("./routes/devices")),
+app.use("/api/configurations", require("./routes/configurations"))
 
 app.listen(port, () => {
   console.log(`⚡️[SERWER]: Server is running at localhost:${port}`);

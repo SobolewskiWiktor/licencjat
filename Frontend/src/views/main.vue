@@ -21,7 +21,7 @@
             </div>
             <div id="statisticLeftSummaryBoxText">
               <h1>Aktywne:</h1>
-              <h2>{{ totalDevices }}</h2>
+              <h2>{{ activeDevices }}</h2>
             </div>
           </div>
           <div id="statisticLeftSummaryBox">
@@ -30,7 +30,7 @@
             </div>
             <div id="statisticLeftSummaryBoxText">
               <h1>Nieaktywne:</h1>
-              <h2>{{ totalDevices }}</h2>
+              <h2>{{ inActiveDevices }}</h2>
             </div>
           </div>
           <div id="statisticLeftSummaryBox">
@@ -39,7 +39,7 @@
             </div>
             <div id="statisticLeftSummaryBoxText">
               <h1>Błędy:</h1>
-              <h2>{{ totalDevices }}</h2>
+              <h2>{{ errorsDevices }}</h2>
             </div>
           </div>
         </div>
@@ -140,6 +140,7 @@
 <script>
 import "../styles/mainView.css";
 import ApexCharts from "apexcharts";
+import axios from "axios";
 export default {
   name: "HereMap",
   props: {
@@ -148,8 +149,11 @@ export default {
   data() {
     return {
       userName: "Marcin Kowalski",
-      totalDevices: 100,
-
+      logedUser: "",
+      totalDevices: 0,
+      activeDevices: 0,
+      inActiveDevices: 0,
+      errorsDevices: 0, 
       seriesLinkDown: [76],
       seriesLinkUtil: [16],
       seriesCPU: [56],
@@ -475,7 +479,8 @@ export default {
     });
     this.platform = platform;
     this.initializeHereMap();
-
+    this.getUserData();
+    this.getDevices();
   },
   methods: {
     async initializeHereMap() { // rendering map
@@ -518,6 +523,28 @@ export default {
       map.addObject(marker)
 
   },
+  async getUserData() {
+    let logedUser = localStorage.getItem("LogedUser")
+      const getUserData = await axios.get(
+        `http://localhost:3100/api/users/getUserData/${logedUser}`
+      );
+      this.userName = getUserData.data.Name + " " + getUserData.data.Surname;
+  },
+  async getDevices()
+  {
+    const devices = await axios.get(`http://localhost:3100/api/devices/getAll`)
+    this.totalDevices = devices.data.length
+    for(let i=0; i< devices.data.length; i++)
+    {
+      if(devices.data[i].Status == "Active")
+      {
+        this.activeDevices += 1;
+      }else
+      {
+        this.inActiveDevices += 1; 
+      }
+    }
+  }
 },
   computed: {
     formattedTime() {

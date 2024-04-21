@@ -34,9 +34,14 @@
 
 <script>
 import "@/styles/login.css";
+import axios from "axios";
+import { useToast } from "vue-toastification";
+import router from "@/router/index";
+const toast = useToast();
 export default {
   data() {
     return {
+      toastService: toast,
       login: "",
       password: "",
     };
@@ -47,9 +52,85 @@ export default {
     {
       if(this.password != "" && this.login != "")
       {
-        this.$router.push('/home');
+        const loginPass = {
+          login: this.login,
+          password: this.password,
+        }
+          const auth = await axios.post(`http://localhost:3100/api/login/`, loginPass)
+          const token = auth.data;
+          await localStorage.setItem('SecurityToken', token);
+          router.push("/home")
+      }else
+      {
+        this.myUseToast("Podaj dane", "warning")
       }
-    }
+    },
+
+
+
+
+    myUseToast(message, type) {
+      if (type == "success") {
+        this.toastService.success(message, {
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: false,
+          hideProgressBar: false,
+          closeButton: "button",
+          icon: true,
+          rtl: false,
+        });
+      }
+      if (type == "error") {
+        this.toastService.error(message, {
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: false,
+          hideProgressBar: false,
+          closeButton: "button",
+          icon: true,
+          rtl: false,
+        });
+      }
+      if (type == "warning") {
+        this.toastService.warning(message, {
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: false,
+          hideProgressBar: false,
+          closeButton: "button",
+          icon: true,
+          rtl: false,
+        });
+      }
+      if (type == "info") {
+        this.toastService.info(message, {
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: false,
+          hideProgressBar: false,
+          closeButton: "button",
+          icon: true,
+          rtl: false,
+        });
+      }
+    },
   }
 };
 </script>

@@ -21,8 +21,7 @@
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="Nazwa"
-                          v-model="name"
-                          readonly
+                          v-model="newname"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -30,8 +29,7 @@
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="Producent"
-                          v-model="manufacture"
-                          readonly
+                          v-model="newmanufacture"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -39,8 +37,7 @@
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="Model"
-                          v-model="model"
-                          readonly
+                          v-model="newmodel"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -50,8 +47,7 @@
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="S / N"
-                          v-model="sn"
-                          readonly
+                          v-model="newsn"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -59,8 +55,7 @@
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="Typ"
-                          v-model="type"
-                          readonly
+                          v-model="newtype"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -68,8 +63,7 @@
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="Ilość portów"
-                          v-model="ports"
-                          readonly
+                          v-model="newports"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -77,19 +71,18 @@
 
                     <v-row>
                       <v-col cols="12" md="4">
-                        <v-text-field
-                          label="Prędkość portów"
-                          v-model="speed"
-                          readonly
+                        <v-combobox
+                          label="Prędkość portu"
+                          v-model="newspeed"
                           variant="outlined"
-                        ></v-text-field>
+                          :items="['10 Mb/s', '100 Mb/s', '1 Gb/s', '5 Gb/s', '10 Gb/s', '25 Gb/s']"
+                        ></v-combobox>
                       </v-col>
 
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="Miasto"
-                          v-model="city"
-                          readonly
+                          v-model="newcity"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -97,8 +90,7 @@
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="Ulica"
-                          v-model="street"
-                          readonly
+                          v-model="newstreet"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -108,8 +100,7 @@
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="Number budynku"
-                          v-model="numberBuilding"
-                          readonly
+                          v-model="newnumberBuilding"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -117,8 +108,7 @@
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="Pomieszczenie"
-                          v-model="room"
-                          readonly
+                          v-model="newroom"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -126,8 +116,7 @@
                       <v-col cols="12" md="4">
                         <v-text-field
                           label="Piętro"
-                          v-model="floor"
-                          readonly
+                          v-model="newfloor"
                           variant="outlined"
                         ></v-text-field>
                       </v-col>
@@ -135,12 +124,12 @@
 
                     <v-row>
                       <v-col cols="12" md="4">
-                        <v-text-field
+                        <v-combobox
                           label="Prioritet"
-                          v-model="priority"
-                          readonly
+                          v-model="newpriority"
                           variant="outlined"
-                        ></v-text-field>
+                          :items="['Low', 'Medium', 'High', 'Critical', 'Disaster']"
+                        ></v-combobox>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -151,10 +140,10 @@
                 <v-spacer></v-spacer>
 
                 <v-btn
-                  text="Wyszukaj"
+                  text="Dodaj"
                   variant="tonal"
                   color="green"
-                  @click.prevent="searchDevice"
+                  @click.prevent="addDevice"
                   :loading="loading"
                 ></v-btn>
                 <v-btn
@@ -277,15 +266,20 @@
       <div id="devicesBoxContent">
         <div id="deviceRow">
           <v-expansion-panels>
-            <v-expansion-panel>
+            <v-expansion-panel v-for="(elem,index) in devices" :key="index">
               <v-expansion-panel-title>
                 <div id="panelTitle">
-                  <div id="panelTitleBoxID">#1</div>
-                  <div id="panelTitleBox">s-pab-a001-1</div>
-                  <div id="panelTitleBox">Cisco WS-C3750X</div>
-                  <div id="panelTitleBox">y9BNXYiR</div>
-                  <div id="panelTitleBox">Switch</div>
-                  <div id="panelTitleBox">48 Port</div>
+                  <div id="panelTitleBoxID"># {{elem.id}}</div>
+                  <div id="panelTitleBox">{{elem.name}}</div>
+                  <div id="panelTitleBox">{{ elem.model }}</div>
+                  <div id="panelTitleBox">{{ elem.sn }}</div>
+                  <div id="panelTitleBox">{{ elem.type }}</div>
+                  <div id="panelTitleBox">{{ elem.ports }}</div>
+                  <div id="panelTitleBox">
+        <v-chip :color="getColor(elem.priority)">
+          {{ elem.priority }}
+        </v-chip>
+      </div>
                 </div>
               </v-expansion-panel-title>
 
@@ -300,6 +294,7 @@
                         text="Informacje"
                         variant="flat"
                         class="ml-2"
+                        @click.prevent="getInfoData(elem.id)"
                       ></v-btn>
                     </template>
 
@@ -518,6 +513,7 @@
                         text="Edytuj"
                         variant="flat"
                         class="ml-2"
+                        @click.prevent="getInfoData(elem.id)"
                       ></v-btn>
                     </template>
 
@@ -530,8 +526,7 @@
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="Nazwa"
-                                    v-model="name"
-                                    readonly
+                                    v-model="editname"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -539,8 +534,7 @@
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="Producent"
-                                    v-model="manufacture"
-                                    readonly
+                                    v-model="editmanufacture"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -548,8 +542,7 @@
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="Model"
-                                    v-model="model"
-                                    readonly
+                                    v-model="editmodel"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -559,8 +552,7 @@
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="S / N"
-                                    v-model="sn"
-                                    readonly
+                                    v-model="editsn"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -568,8 +560,7 @@
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="Typ"
-                                    v-model="type"
-                                    readonly
+                                    v-model="edittype"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -577,8 +568,7 @@
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="Ilość portów"
-                                    v-model="ports"
-                                    readonly
+                                    v-model="editports"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -586,19 +576,18 @@
 
                               <v-row>
                                 <v-col cols="12" md="4">
-                                  <v-text-field
-                                    label="Prędkość portów"
-                                    v-model="speed"
-                                    readonly
+                                  <v-combobox
+                                    label="Prędkość portu"
+                                    v-model="editspeed"
                                     variant="outlined"
-                                  ></v-text-field>
+                                    :items="['10 Mb/s', '100 Mb/s', '1 Gb/s', '5 Gb/s', '10 Gb/s', '25 Gb/s']"
+                                  ></v-combobox>
                                 </v-col>
 
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="Miasto"
-                                    v-model="city"
-                                    readonly
+                                    v-model="editcity"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -607,7 +596,6 @@
                                   <v-text-field
                                     label="Ulica"
                                     v-model="street"
-                                    readonly
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -617,8 +605,7 @@
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="Number budynku"
-                                    v-model="numberBuilding"
-                                    readonly
+                                    v-model="editnumberBuilding"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -626,8 +613,7 @@
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="Pomieszczenie"
-                                    v-model="room"
-                                    readonly
+                                    v-model="editroom"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -635,8 +621,7 @@
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="Piętro"
-                                    v-model="floor"
-                                    readonly
+                                    v-model="editfloor"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -644,12 +629,12 @@
 
                               <v-row>
                                 <v-col cols="12" md="4">
-                                  <v-text-field
+                                  <v-combobox
                                     label="Prioritet"
-                                    v-model="priority"
-                                    readonly
+                                    v-model="editpriority"
                                     variant="outlined"
-                                  ></v-text-field>
+                                    :items="['Low', 'Medium', 'High', 'Critical', 'Disaster']"
+                                  ></v-combobox>
                                 </v-col>
                               </v-row>
                             </v-container>
@@ -662,7 +647,7 @@
                             text="Zapisz"
                             class="text-green"
                             variant="outlined"
-                            @click="isActive.value = false"
+                            @click.prevent="editDevice(elem.id)"
                           ></v-btn>
                           <v-btn
                             text="Zamknij"
@@ -760,10 +745,12 @@
 <script>
 import "../styles/deviceView.css";
 import ApexCharts from "apexcharts";
+import axios from "axios";
 export default {
   data() {
     return {
       loading: false,
+      devices: [],
       name: "s-pab-a001-1",
       manufacture: "Cisco",
       model: "WS-C3750X",
@@ -777,6 +764,36 @@ export default {
       room: "201",
       floor: "22",
       priority: "Critical",
+      
+      //new device
+      newname: "",
+      newmanufacture: "",
+      newmodel: "",
+      newsn: "",
+      newtype: "",
+      newports: "",
+      newspeed: "",
+      newcity: "",
+      newstreet: "",
+      newnumberBuilding: "",
+      newroom: "",
+      newfloor: "",
+      newpriority: "",
+
+      //edit device
+      editname: "",
+      editmanufacture: "",
+      editmodel: "",
+      editsn: "",
+      edittype: "",
+      editports: "",
+      editspeed: "",
+      editcity: "",
+      editstreet: "",
+      editnumberBuilding: "",
+      editroom: "",
+      editfloor: "",
+      editpriority: "",
 
       configuration: "",
 
@@ -914,10 +931,28 @@ export default {
   },
   async mounted() {
     await this.DefaultKonf();
+    await this.getDevices();
   },
   methods: {
     async searchDevice() {
       this.loading = !this.loading;
+    },
+    async getDevices() {
+      this.devices = [];
+      const getter = await axios.get(`http://localhost:3100/api/devices/getAll`);
+      for(let i=0; i<getter.data.length; i++)
+      {
+        let device = {
+          id: String(getter.data[i].ID),
+          name: String(getter.data[i].Name),
+          model: String(getter.data[i].Model),
+          sn: String(getter.data[i].SerialNumber),
+          type: String(getter.data[i].Type),
+          ports: String(getter.data[i].NumberOfPorts),
+          priority: String(getter.data[i].Priority)
+        }
+        this.devices.push(device)
+      }
     },
     async DefaultKonf() {
       const konfiguracjaSwitcha = `
@@ -949,6 +984,95 @@ export default {
 
       this.configuration = konfiguracjaSwitcha;
     },
+    async addDevice()
+    {
+       const newDevice = {
+         name: String(this.newname),
+         manufacturer: String(this.newmanufacture),
+         model: String(this.newmodel),
+         serial: String(this.newsn),
+         type: String(this.newtype),
+         numberOfPorts: String(this.newports),
+         speedPorts: String(this.newspeed),
+         city: String(this.newcity),
+         street: String(this.newstreet),
+         numberBuilding: String(this.newnumberBuilding),
+         room: String(this.newroom),
+         floor: String(this.newfloor),
+         priority: String(this.newpriority)
+       }
+       const creater = await axios.post(`http://localhost:3100/api/devices/create`, newDevice)
+       this.getDevices();
+    },
+    getColor(priority) {
+    if (priority === 'Low') {
+      return 'teal-lighten-2';
+    } else if (priority === 'Medium') {
+      return 'orange-lighten-2';
+    } else if (priority === 'High') {
+      return 'deep-orange-darken-3'
+    }else if (priority === 'Critical') {
+      return 'red-lighten-1';
+    } else if (priority === 'Disaster') {
+      return 'red-accent-4';
+    } else {
+      return 'grey'; // Domyślny kolor, gdy priority nie pasuje do żadnego przypadku
+    }
+  },
+  async getInfoData(id){
+      let getter = await axios.get(`http://localhost:3100/api/devices/getData/${id}`)
+
+      this.name = String(getter.data.Name);
+      this.manufacture = String(getter.data.Manufacturer);
+      this.model = String(getter.data.Model);
+      this.sn = String(getter.data.SerialNumber);
+      this.type = String(getter.data.Type);
+      this.ports = String(getter.data.NumberOfPorts);
+      this.speed = String(getter.data.SpeedOfPorts);
+      this.city = String(getter.data.City);
+      this.street = String(getter.data.Street);
+      this.numberBuilding = String(getter.data.NumberOfStreet);
+      this.room = String(getter.data.Room);
+      this.floor = String(getter.data.Floor);
+      this.priority = String(getter.data.Priority)
+
+      this.editname = String(getter.data.Name);
+      this.editmanufacture = String(getter.data.Manufacturer);
+      this.editmodel = String(getter.data.Model);
+      this.editsn = String(getter.data.SerialNumber);
+      this.edittype = String(getter.data.Type);
+      this.editports = String(getter.data.NumberOfPorts);
+      this.editspeed = String(getter.data.SpeedOfPorts);
+      this.editcity = String(getter.data.City);
+      this.editstreet = String(getter.data.Street);
+      this.editnumberBuilding = String(getter.data.NumberOfStreet);
+      this.editroom = String(getter.data.Room);
+      this.editfloor = String(getter.data.Floor);
+      this.editpriority = String(getter.data.Priority)
+  },
+  async editDevice(deviceId)
+  {
+      const editDevice = {
+        id: String(deviceId),
+        name: String(this.editname),
+        manufacturer: String(this.editmanufacture),
+        model: String(this.editmodel),
+        serial: String(this.editsn),
+        type: String(this.edittype),
+        numberOfPorts: String(this.editports),
+        speedPorts: String(this.editspeed),
+        city: String(this.editcity),
+        street: String(this.editstreet),
+        numberBuilding: String(this.editnumberBuilding),
+        room: String(this.editroom),
+        floor: String(this.editfloor),
+        priority: String(this.editpriority),
+      }
+
+      const updater = await axios.post(`http://localhost:3100/api/devices/update`, editDevice);
+      this.getDevices();
+      console.log(updater)
+  }
   },
 };
 </script>

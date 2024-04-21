@@ -25,9 +25,10 @@ router.post("/", async (req, res) => {
     });
     if(getter.length == 0)
     {
-        res.status(200).json("Bad login");
+        res.status(401).json("Bad login");
         return;
     }
+    
     const match = await bcrypt.compare(
       String(req.body.password),
       getter[0].Password

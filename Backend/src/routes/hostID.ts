@@ -11,7 +11,7 @@ router.use(express.json());
 router.post("/getDeviceID", async (req, res) => {
     try
     {
-        const targetHostName = String(req.body.device)
+        const targetHostName = String(req.body.name)
         const zabbixApiUrl = test.zabbixApiUrl
         const authToken = test.authToken
         let getFromApi = await axios.post(zabbixApiUrl, {
@@ -27,7 +27,6 @@ router.post("/getDeviceID", async (req, res) => {
             id: 1,
           })
         let deviceID = getFromApi.data.result
-        
         res.status(200).json(deviceID)
     }catch(err)
     {

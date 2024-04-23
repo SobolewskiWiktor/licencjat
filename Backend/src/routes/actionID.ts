@@ -11,7 +11,7 @@ router.use(express.json());
 router.post("/getActionID", async (req, res) => {
     try
     {
-        const targetHostName = String(req.body.device)
+        const targetHostName = String(req.body.hostid)
         const zabbixApiUrl = test.zabbixApiUrl
         const authToken = test.authToken
         let getFromApi = await axios.post(zabbixApiUrl, {
@@ -25,11 +25,11 @@ router.post("/getActionID", async (req, res) => {
             id: 1,
           })
         const actionIds = []; 
-        const parameterName = ["ICMP Ping", "Operational status", "Uptime", "System description", "Firmware version", "Hardware serial number", "CPU utilization", "Memory utilization", "Hardware model name"]
+        const parameterName = ["ICMP Ping", "Operational status", "Uptime", "System description", "Firmware version", "Hardware serial number", "CPU utilization", "Memory utilization", "Hardware model name", "Bits received", "Bits sent", "Speed", "TP-LINK: ICMP loss", "TP-LINK: ICMP response time"]
         for(let i=0; i<getFromApi.data.result.length; i++)
         {
             const matchingParameter = parameterName.find(param => getFromApi.data.result[i].name.includes(param));
-            const indexMatchingParameter = parameterName.indexOf(parameterName.find(param => getFromApi.data.result[i].name.includes(param)) || 0);
+            const indexMatchingParameter = parameterName.indexOf(parameterName.find(param => getFromApi.data.result[i].name.includes(param)) || "0");
             if(matchingParameter)
             {
                 let parameter = {

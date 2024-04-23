@@ -536,7 +536,7 @@ export default {
     this.totalDevices = devices.data.length
     for(let i=0; i< devices.data.length; i++)
     {
-      if(devices.data[i].Status == "Active")
+      if(devices.data[i].Status == "Aktywny")
       {
         this.activeDevices += 1;
       }else

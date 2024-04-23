@@ -38,7 +38,7 @@ router.post("/getUptime", async (req, res) => {
 router.post("/getOs", async (req,res) => {
     try
     {
-        const deviceID = String(req.body.device)
+        const deviceID = String(req.body.name)
         const actionID = String(req.body.action)
         const zabbixApiUrl = test.zabbixApiUrl
         const authToken = test.authToken
@@ -183,6 +183,7 @@ router.post("/getDescription", async(req,res) => {
             auth: authToken,
             id: 1,
           })
+          console.log(getter)
           res.status(200).json(getter.data.result[0].value)
     }catch(err)
     {

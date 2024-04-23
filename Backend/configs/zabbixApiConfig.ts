@@ -1,3 +1,3 @@
-const zabbixApiUrl = 'http://192.168.0.80/api_jsonrpc.php';
-const authToken = 'a9b22f0ecf66159761d9e9aaab180a779d5d0dcb491779d44f3ed7ecbfe7cdd3';
+const zabbixApiUrl = 'http://192.168.0.115/api_jsonrpc.php';
+const authToken = 'ab431bead0ec9caeed76648811f43a4dd6e82b3783ae8473716f05bcf9c440cd';
 export default {zabbixApiUrl, authToken}

@@ -75,7 +75,14 @@
                           label="Prędkość portu"
                           v-model="newspeed"
                           variant="outlined"
-                          :items="['10 Mb/s', '100 Mb/s', '1 Gb/s', '5 Gb/s', '10 Gb/s', '25 Gb/s']"
+                          :items="[
+                            '10 Mb/s',
+                            '100 Mb/s',
+                            '1 Gb/s',
+                            '5 Gb/s',
+                            '10 Gb/s',
+                            '25 Gb/s',
+                          ]"
                         ></v-combobox>
                       </v-col>
 
@@ -128,7 +135,13 @@
                           label="Prioritet"
                           v-model="newpriority"
                           variant="outlined"
-                          :items="['Low', 'Medium', 'High', 'Critical', 'Disaster']"
+                          :items="[
+                            'Low',
+                            'Medium',
+                            'High',
+                            'Critical',
+                            'Disaster',
+                          ]"
                         ></v-combobox>
                       </v-col>
                     </v-row>
@@ -173,40 +186,11 @@
               <v-card-text>
                 <v-form v-model="valid">
                   <v-container>
-                    <v-row>
-                      <v-col cols="2" md="6">
-                        <v-text-field
-                          v-model="firstname"
-                          :counter="10"
-                          :rules="nameRules"
-                          label="Miasto"
-                          hide-details
-                          required
-                        ></v-text-field>
-                      </v-col>
-
-                      <v-col cols="2" md="6">
-                        <v-text-field
-                          v-model="lastname"
-                          :counter="10"
-                          :rules="nameRules"
-                          label="Ulica"
-                          hide-details
-                          required
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                    <v-divider
-                      :thickness="3"
-                      color="info"
-                      class="mt-5"
-                    ></v-divider>
                     <v-row class="mt-2">
                       <v-col cols="2" md="6">
                         <v-text-field
-                          v-model="firstname"
+                          v-model="searchName"
                           :counter="10"
-                          :rules="nameRules"
                           label="Nazwa"
                           hide-details
                           required
@@ -214,22 +198,9 @@
                       </v-col>
                       <v-col cols="2" md="6">
                         <v-text-field
-                          v-model="firstname"
+                          v-model="searchSerial"
                           :counter="10"
-                          :rules="nameRules"
                           label="Numer Seryjny"
-                          hide-details
-                          required
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                    <v-row class="mt-2">
-                      <v-col cols="2" md="6">
-                        <v-text-field
-                          v-model="firstname"
-                          :counter="10"
-                          :rules="nameRules"
-                          label="Adres IP"
                           hide-details
                           required
                         ></v-text-field>
@@ -247,7 +218,6 @@
                   variant="tonal"
                   color="green"
                   @click.prevent="searchDevice"
-                  :loading="loading"
                 ></v-btn>
                 <v-btn
                   text="Zamknij"
@@ -259,6 +229,14 @@
             </v-card>
           </template>
         </v-dialog>
+          <v-btn
+            color="surface-variant"
+            class="ml-2"
+            text="Wyczyść wyszukiwanie"
+            variant="flat"
+            @click.prevent="getDevices()"
+          ></v-btn>
+
       </div>
     </div>
 
@@ -266,20 +244,20 @@
       <div id="devicesBoxContent">
         <div id="deviceRow">
           <v-expansion-panels>
-            <v-expansion-panel v-for="(elem,index) in devices" :key="index">
+            <v-expansion-panel v-for="(elem, index) in devices" :key="index">
               <v-expansion-panel-title>
                 <div id="panelTitle">
-                  <div id="panelTitleBoxID"># {{elem.id}}</div>
-                  <div id="panelTitleBox">{{elem.name}}</div>
+                  <div id="panelTitleBoxID"># {{ elem.id }}</div>
+                  <div id="panelTitleBox">{{ elem.name }}</div>
                   <div id="panelTitleBox">{{ elem.model }}</div>
                   <div id="panelTitleBox">{{ elem.sn }}</div>
                   <div id="panelTitleBox">{{ elem.type }}</div>
                   <div id="panelTitleBox">{{ elem.ports }}</div>
                   <div id="panelTitleBox">
-        <v-chip :color="getColor(elem.priority)">
-          {{ elem.priority }}
-        </v-chip>
-      </div>
+                    <v-chip :color="getColor(elem.priority)">
+                      {{ elem.priority }}
+                    </v-chip>
+                  </div>
                 </div>
               </v-expansion-panel-title>
 
@@ -445,7 +423,7 @@
                     </template>
                   </v-dialog>
                   <!-- Przycisk statystyk -->
-                  <v-dialog max-width="900">
+                  <v-dialog max-width="1800">
                     <template v-slot:activator="{ props: activatorProps }">
                       <v-btn
                         v-bind="activatorProps"
@@ -453,20 +431,90 @@
                         text="Statystyki"
                         variant="flat"
                         class="ml-2"
+                        @click.prevent="getStatistics(elem.name)"
                       ></v-btn>
                     </template>
 
                     <template v-slot:default="{ isActive }">
-                      <v-card title="Dialog">
+                      <v-card title="Statystyki urządzenia">
                         <v-card-text>
+                          <div id="statisticLoader" v-if="statLoader == true">
+                            <v-progress-circular
+                              :size="240"
+                              color="primary"
+                              indeterminate
+                            ></v-progress-circular>
+                          </div>
                           <div id="StatisticsContentBox">
-                            <div id="StatisticsChart">
+                            <div id="StatisticsRow">
+                              <div id="StatisticsPortStatus">
+                                  <v-card
+                                    class="mx-auto"
+                                    width="350"
+                                  >
+                                    <v-list density="compact">
+                                      <v-list-subheader>Port Status</v-list-subheader>
+
+                                      <v-list-item
+                                        v-for="(item, i) in portStatus"
+                                        :key="i"
+                                        :value="item.name"
+                                      >
+                                        <template v-slot:prepend>
+                                          <v-icon icon="mdi mdi-ethernet"></v-icon>
+                                        </template>
+
+                                        <div class="d-flex align-center">
+                                          <v-list-item-title v-text="item.name"></v-list-item-title>
+                                          <!-- Chip wyświetlany na równi z tytułem -->
+                                          <v-chip v-if="item.status[0] == 2" color="red" class="ml-5">NieAktywny</v-chip>
+                                          <v-chip v-else color="green" class="ml-5">Aktywny</v-chip>
+                                        </div>
+                                      </v-list-item>
+                                    </v-list>
+                                  </v-card>
+                                  <v-card
+                                    class="ml-10"
+                                    width="350"
+                                  >
+                                    <v-list>
+                                      <v-list-subheader>Port Speed</v-list-subheader>
+
+                                      <v-list-item
+                                        v-for="(elem, i) in portSpeed"
+                                        :key="i"
+                                        :value="elem.name"
+                                      >
+                                        <template v-slot:prepend>
+                                          <v-icon icon="mdi mdi-ethernet"></v-icon>
+                                        </template>
+
+                                        <div class="d-flex align-center">
+                                          <v-list-item-title v-text="elem.name"></v-list-item-title>
+                                          <!-- Chip wyświetlany na równi z tytułem -->
+                                          <v-chip  v-if="elem.speed == `Wyłączony`" color="red" class="ml-5">{{elem.speed}}</v-chip>
+                                          <v-chip  v-else color="green" class="ml-5">{{elem.speed}}</v-chip>
+                                        </div>
+                                      </v-list-item>
+                                    </v-list>
+                                  </v-card>
+                              </div>
+                              <div id="deviceStatus">
+                                <div id="chart">
+                                  <apexchart type="area" height="350" :options="chartOptions4" :series="series3"></apexchart>
+                                </div>
+                                <div id="chart">
+                                  <apexchart type="area" height="350" :options="chartOptions5" :series="series4"></apexchart>
+                                </div>
+                              </div>
+                            </div>
+                            <div id="StatisticsChart" class="mt-10">
                               <div id="chart">
                                 <apexchart
                                   type="line"
                                   height="250"
                                   :options="chartOptions"
-                                  :series="series"
+                                  :series="series0"
                                 ></apexchart>
                               </div>
                             </div>
@@ -476,7 +524,7 @@
                                   type="line"
                                   height="250"
                                   :options="chartOptions2"
-                                  :series="series"
+                                  :series="series1"
                                 ></apexchart>
                               </div>
                             </div>
@@ -497,7 +545,9 @@
                           <v-spacer></v-spacer>
 
                           <v-btn
-                            text="Close Dialog"
+                            class="mt-2 ml-2 mb-2"
+                            text="Zamknij"
+                            variant="outlined"
                             @click="isActive.value = false"
                           ></v-btn>
                         </v-card-actions>
@@ -580,7 +630,14 @@
                                     label="Prędkość portu"
                                     v-model="editspeed"
                                     variant="outlined"
-                                    :items="['10 Mb/s', '100 Mb/s', '1 Gb/s', '5 Gb/s', '10 Gb/s', '25 Gb/s']"
+                                    :items="[
+                                      '10 Mb/s',
+                                      '100 Mb/s',
+                                      '1 Gb/s',
+                                      '5 Gb/s',
+                                      '10 Gb/s',
+                                      '25 Gb/s',
+                                    ]"
                                   ></v-combobox>
                                 </v-col>
 
@@ -595,7 +652,7 @@
                                 <v-col cols="12" md="4">
                                   <v-text-field
                                     label="Ulica"
-                                    v-model="street"
+                                    v-model="editstreet"
                                     variant="outlined"
                                   ></v-text-field>
                                 </v-col>
@@ -633,7 +690,24 @@
                                     label="Prioritet"
                                     v-model="editpriority"
                                     variant="outlined"
-                                    :items="['Low', 'Medium', 'High', 'Critical', 'Disaster']"
+                                    :items="[
+                                      'Low',
+                                      'Medium',
+                                      'High',
+                                      'Critical',
+                                      'Disaster',
+                                    ]"
+                                  ></v-combobox>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                  <v-combobox
+                                    label="Status"
+                                    v-model="editStatus"
+                                    variant="outlined"
+                                    :items="[
+                                      'Aktywny',
+                                      'Nieaktywny',
+                                    ]"
                                   ></v-combobox>
                                 </v-col>
                               </v-row>
@@ -657,7 +731,7 @@
                       </v-card>
                     </template>
                   </v-dialog>
-                  <!-- Przycisk pobrania konfiguracji -->
+                  <!-- Przycisk konfiguracji -->
                   <v-dialog max-width="500">
                     <template v-slot:activator="{ props: activatorProps }">
                       <v-btn
@@ -713,7 +787,7 @@
                     <template v-slot:default="{ isActive }">
                       <v-card title="Usuwanie">
                         <v-card-text>
-                          Czy napewno chcesz usunąć {{ name }} ?
+                          Czy napewno chcesz usunąć {{ elem.name }} ?
                         </v-card-text>
 
                         <v-card-actions>
@@ -722,7 +796,7 @@
                             text="Potwierdź"
                             variant="outlined"
                             class="text-green"
-                            @click="isActive.value = false"
+                            @click.prevent="deleteDevice(elem.id)"
                           ></v-btn>
                           <v-btn
                             text="Zamknij"
@@ -749,6 +823,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      statLoader: true,
       loading: false,
       devices: [],
       name: "s-pab-a001-1",
@@ -764,7 +839,7 @@ export default {
       room: "201",
       floor: "22",
       priority: "Critical",
-      
+
       //new device
       newname: "",
       newmanufacture: "",
@@ -797,23 +872,16 @@ export default {
 
       configuration: "",
 
-      series: [
-        {
-          name: "Desktops",
-          data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
-        },
-      ],
-      series2: [
-    { name: "Gi 1", data: [3, 11, 75, 36, 17, 31, 16, 49, 45] },
-    { name: "Gi 2", data: [18, 20, 45, 11, 85, 50, 8, 64, 44] },
-    { name: "Gi 3", data: [32, 97, 29, 30, 76, 35, 39, 73, 46] },
-    { name: "Gi 4", data: [56, 0, 16, 90, 82, 32, 31, 77, 88] },
-    { name: "Gi 5", data: [16, 31, 41, 9, 89, 89, 38, 53, 15] },
-    { name: "Gi 6", data: [71, 82, 50, 45, 74, 84, 94, 86, 72] },
-    { name: "Gi 7", data: [18, 7, 17, 4, 4, 31, 61, 52, 84] },
-    { name: "Gi 8", data: [81, 38, 63, 96, 36, 19, 100, 83, 68] },
-    { name: "Gi 9", data: [16, 60, 96, 15, 7, 49, 44, 21, 16] },
-      ],
+
+      //staystyki 
+      portStatus: [],
+      portSpeed: [],
+
+      series0: [],
+      series1: [],
+      series2: [],
+      series3: [],
+      series4: [],
       chartOptions: {
         chart: {
           height: 350,
@@ -839,17 +907,6 @@ export default {
           },
         },
         xaxis: {
-          categories: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-          ],
         },
       },
       chartOptions2: {
@@ -877,17 +934,6 @@ export default {
           },
         },
         xaxis: {
-          categories: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-          ],
         },
       },
       chartOptions3: {
@@ -914,19 +960,66 @@ export default {
           },
         },
         xaxis: {
-          categories: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-          ],
         },
       },
+      chartOptions4: {
+        chart: {
+          height: 350,
+          type: "line",
+          zoom: {
+            enabled: false,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: "straight",
+        },
+        title: {
+          text: "ICMP Time",
+          align: "left",
+        },
+        grid: {
+          row: {
+            colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+            opacity: 0.5,
+          },
+        },
+        xaxis: {
+        },
+      },
+      chartOptions5: {
+        chart: {
+          height: 350,
+          type: "line",
+          zoom: {
+            enabled: false,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: "straight",
+        },
+        title: {
+          text: "ICMP Loss",
+          align: "left",
+        },
+        grid: {
+          row: {
+            colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+            opacity: 0.5,
+          },
+        },
+        xaxis: {
+        },
+      },
+
+      //wyszukiwanie
+      searchName: '',
+      searchSerial: '',
     };
   },
   async mounted() {
@@ -934,14 +1027,12 @@ export default {
     await this.getDevices();
   },
   methods: {
-    async searchDevice() {
-      this.loading = !this.loading;
-    },
     async getDevices() {
       this.devices = [];
-      const getter = await axios.get(`http://localhost:3100/api/devices/getAll`);
-      for(let i=0; i<getter.data.length; i++)
-      {
+      const getter = await axios.get(
+        `http://localhost:3100/api/devices/getAll`
+      );
+      for (let i = 0; i < getter.data.length; i++) {
         let device = {
           id: String(getter.data[i].ID),
           name: String(getter.data[i].Name),
@@ -949,9 +1040,9 @@ export default {
           sn: String(getter.data[i].SerialNumber),
           type: String(getter.data[i].Type),
           ports: String(getter.data[i].NumberOfPorts),
-          priority: String(getter.data[i].Priority)
-        }
-        this.devices.push(device)
+          priority: String(getter.data[i].Priority),
+        };
+        this.devices.push(device);
       }
     },
     async DefaultKonf() {
@@ -984,43 +1075,47 @@ export default {
 
       this.configuration = konfiguracjaSwitcha;
     },
-    async addDevice()
-    {
-       const newDevice = {
-         name: String(this.newname),
-         manufacturer: String(this.newmanufacture),
-         model: String(this.newmodel),
-         serial: String(this.newsn),
-         type: String(this.newtype),
-         numberOfPorts: String(this.newports),
-         speedPorts: String(this.newspeed),
-         city: String(this.newcity),
-         street: String(this.newstreet),
-         numberBuilding: String(this.newnumberBuilding),
-         room: String(this.newroom),
-         floor: String(this.newfloor),
-         priority: String(this.newpriority)
-       }
-       const creater = await axios.post(`http://localhost:3100/api/devices/create`, newDevice)
-       this.getDevices();
+    async addDevice() {
+      const newDevice = {
+        name: String(this.newname),
+        manufacturer: String(this.newmanufacture),
+        model: String(this.newmodel),
+        serial: String(this.newsn),
+        type: String(this.newtype),
+        numberOfPorts: String(this.newports),
+        speedPorts: String(this.newspeed),
+        city: String(this.newcity),
+        street: String(this.newstreet),
+        numberBuilding: String(this.newnumberBuilding),
+        room: String(this.newroom),
+        floor: String(this.newfloor),
+        priority: String(this.newpriority),
+      };
+      const creater = await axios.post(
+        `http://localhost:3100/api/devices/create`,
+        newDevice
+      );
+      this.getDevices();
     },
     getColor(priority) {
-    if (priority === 'Low') {
-      return 'teal-lighten-2';
-    } else if (priority === 'Medium') {
-      return 'orange-lighten-2';
-    } else if (priority === 'High') {
-      return 'deep-orange-darken-3'
-    }else if (priority === 'Critical') {
-      return 'red-lighten-1';
-    } else if (priority === 'Disaster') {
-      return 'red-accent-4';
-    } else {
-      return 'grey'; // Domyślny kolor, gdy priority nie pasuje do żadnego przypadku
-    }
-  },
-  async getInfoData(id){
-      let getter = await axios.get(`http://localhost:3100/api/devices/getData/${id}`)
+      if (priority === "Low") {
+        return "teal-lighten-2";
+      } else if (priority === "Medium") {
+        return "orange-lighten-2";
+      } else if (priority === "High") {
+        return "deep-orange-darken-3";
+      } else if (priority === "Critical") {
+        return "red-lighten-1";
+      } else if (priority === "Disaster") {
+        return "red-accent-4";
+      } else {
+        return "grey"; // Domyślny kolor, gdy priority nie pasuje do żadnego przypadku
+      }
+    },
+    async getInfoData(id) {
+      let getter = await axios.get(
+        `http://localhost:3100/api/devices/getData/${id}`
+      );
 
       this.name = String(getter.data.Name);
       this.manufacture = String(getter.data.Manufacturer);
@@ -1034,7 +1129,7 @@ export default {
       this.numberBuilding = String(getter.data.NumberOfStreet);
       this.room = String(getter.data.Room);
       this.floor = String(getter.data.Floor);
-      this.priority = String(getter.data.Priority)
+      this.priority = String(getter.data.Priority);
 
       this.editname = String(getter.data.Name);
       this.editmanufacture = String(getter.data.Manufacturer);
@@ -1048,10 +1143,10 @@ export default {
       this.editnumberBuilding = String(getter.data.NumberOfStreet);
       this.editroom = String(getter.data.Room);
       this.editfloor = String(getter.data.Floor);
-      this.editpriority = String(getter.data.Priority)
-  },
-  async editDevice(deviceId)
-  {
+      this.editpriority = String(getter.data.Priority);
+      this.editStatus = String(getter.data.Status)
+    },
+    async editDevice(deviceId) {
       const editDevice = {
         id: String(deviceId),
         name: String(this.editname),
@@ -1067,12 +1162,157 @@ export default {
         room: String(this.editroom),
         floor: String(this.editfloor),
         priority: String(this.editpriority),
-      }
+        status: String(this.editStatus),
+      };
 
-      const updater = await axios.post(`http://localhost:3100/api/devices/update`, editDevice);
+      const updater = await axios.post(
+        `http://localhost:3100/api/devices/update`,
+        editDevice
+      );
       this.getDevices();
-      console.log(updater)
-  }
+      console.log(updater);
+    },
+    async deleteDevice(deviceID) {
+      const deleter = await axios.post(
+        `http://localhost:3100/api/devices/delete/${deviceID}`
+      );
+      this.getDevices();
+    },
+    async getStatistics(deviceName) {
+      this.statLoader = true
+      //zerowanie tabel:
+      this.portStatus = [];
+      this.portSpeed = [];
+      this.series0 = [];
+      this.series1 = [];
+      this.series2 = [];
+      this.series3 = [];
+      this.series4 = [];
+      let device = { name: String(deviceName) };
+      // pobranie ID urządzenia monitorowanego
+      const getDeviceID = await axios.post(
+        `http://localhost:3100/api/gethostid/getDeviceID`,
+        device
+      );
+      device.hostid = String(getDeviceID.data[0].hostid);
+
+      // pobranie id parametów 
+      const getIDParameters = await axios.post(
+        `http://localhost:3100/api/getactionid/getActionID`,
+        device
+      );
+      console.log(getIDParameters)
+      let tempStatus = 0;
+      let tempSpeed = 0;
+      let tempBirsReceived = 0;
+      for (let i = 0; i < getIDParameters.data.length; i++) {
+        // zliczenie statusu portów z 60 danych
+        if (getIDParameters.data[i].name == "Operational status") {
+          let interfacename = `interface 0/` + tempStatus
+          tempStatus += 1;
+          device.action = String(getIDParameters.data[i].id);
+          const getPortStatus = await axios.post(
+            `http://localhost:3100/api/devicestatus/getStatus`,
+            device
+          );
+          const object = {name: interfacename, status: getPortStatus.data[59]}
+          this.portStatus.push(object)
+        }else if (getIDParameters.data[i].name == "Speed")
+        {
+          let interfacename = `interface 0/` + tempSpeed
+          tempSpeed += 1;
+          device.action = String(getIDParameters.data[i].id);
+          const getPortStatus = await axios.post(
+            `http://localhost:3100/api/devicestatus/getStatus`,
+            device
+          );
+          const object = {name: interfacename, speed: ""}
+          if(getPortStatus.data[1] >= 1000000000)
+          {
+            object.speed = Number(parseFloat(getPortStatus.data[1]) / 1000000000) +`Gb/s`
+          }else if (getPortStatus.data[1] > 0 && getPortStatus.data[1] < 1000000000)
+          {
+            object.speed = Number(parseFloat(getPortStatus.data[1])) +`Mb/s`
+          }else
+          {
+            object.speed = "Wyłączony"
+          }
+          this.portSpeed.push(object)
+        }else if (getIDParameters.data[i].name == "Bits received") {
+          let interfacename = `interface 0/` + tempBirsReceived
+          tempBirsReceived += 1;
+          device.action = String(getIDParameters.data[i].id);
+          const getPortStatus = await axios.post(
+            `http://localhost:3100/api/devicestatus/getStatus`,
+            device
+          );
+          const object = {name: interfacename, data: getPortStatus.data}
+          this.series2.push(object)
+        }else if (getIDParameters.data[i].name == "TP-LINK: ICMP loss")
+        {
+          device.action = String(getIDParameters.data[i].id);
+          const getPortStatus = await axios.post(
+            `http://localhost:3100/api/devicestatus/getRamUtil`,
+            device
+          );
+          let objectToPut = {name:deviceName, data:getPortStatus.data}
+          this.series4.push(objectToPut)
+        }
+        else if (getIDParameters.data[i].name == "TP-LINK: ICMP response time")
+        {
+          device.action = String(getIDParameters.data[i].id);
+          const getPortStatus = await axios.post(
+            `http://localhost:3100/api/devicestatus/getRamUtil`,
+            device
+          );
+          let tempMsTab = []
+          for(let j=0; j<getPortStatus.data.length; j++)
+          {
+            let ConvertToMs = Number(parseFloat(getPortStatus.data[j])*1000).toFixed(2)
+        
+            tempMsTab.push(ConvertToMs)
+          }
+          let objectToPut = {name:deviceName, data:tempMsTab}
+          this.series3.push(objectToPut)
+        }
+        else if (getIDParameters.data[i].name == "CPU utilization")
+        {
+          device.action = String(getIDParameters.data[i].id);
+          const getPortStatus = await axios.post(
+            `http://localhost:3100/api/devicestatus/getRamUtil`,
+            device
+          );
+          let objectToPut = {name:deviceName, data:getPortStatus.data}
+          this.series0.push(objectToPut)
+        }
+        else if (getIDParameters.data[i].name == "Memory utilization")
+        {
+          device.action = String(getIDParameters.data[i].id);
+          const getPortStatus = await axios.post(
+            `http://localhost:3100/api/devicestatus/getRamUtil`,
+            device
+          );
+          let objectToPut = {name:deviceName, data:getPortStatus.data}
+          this.series1.push(objectToPut)
+        }
+
+      }
+      this.statLoader = false;
+    },
+    async searchDevice()
+    {
+      if(this.searchName != '')
+      {
+        const foundDevice = this.devices.find(device => device.name === this.searchName);
+        this.devices = [];
+        this.devices.push(foundDevice)
+      }else if(this.searchSerial != '')
+      {
+        const foundDevice = this.devices.find(device => device.sn === this.searchSerial);
+        this.devices = [];
+        this.devices.push(foundDevice)
+      }
+    },
   },
 };
 </script>

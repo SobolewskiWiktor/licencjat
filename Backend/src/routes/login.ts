@@ -33,6 +33,7 @@ router.post("/", async (req, res) => {
       String(req.body.password),
       getter[0].Password
     );
+    console.log(match)
     if (match) {
       const token = jwt.sign(
         { Login: req.body.login, Backend: 'E=]t3;j}5AN>czSXR8)HhY' },

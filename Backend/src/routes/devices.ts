@@ -7,7 +7,6 @@ const router: Router = express.Router();
 
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
-
 router.get("/getAll", async (req, res) => {
   try {
     let getter = await prisma.devices.findMany();
@@ -37,7 +36,7 @@ router.post("/create", async(req,res) => {
                 Floor: String(req.body.floor),
                 Priority: String(req.body.priority),
                 NumberOfStreet: String(req.body.numberBuilding),
-                Status: String("Active")
+                Status: String("Aktywny")
             }
         })
 
@@ -68,6 +67,7 @@ router.post("/update", async(req,res) => {
                 Floor: String(req.body.floor),
                 Priority: String(req.body.priority),
                 NumberOfStreet: String(req.body.numberBuilding),
+                Status: String(req.body.status)
             }
         })
 
@@ -78,14 +78,15 @@ router.post("/update", async(req,res) => {
     }
 })
 
-router.post("/delete", async(req,res) => {
+router.post("/delete/:id", async(req,res) => {
     try
     {
-        const deleter = await prisma.devices.delete({where:{ID: Number(req.body.id)}})
+        const deleter = await prisma.devices.delete({where:{ID: Number(req.params.id)}})
 
         res.status(200).json(deleter)
     }catch(err)
     {
+        console.log(err)
         res.status(500).json(err)
     }
 })

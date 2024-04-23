@@ -1164,7 +1164,6 @@ export default {
         priority: String(this.editpriority),
         status: String(this.editStatus),
       };
-
       const updater = await axios.post(
         `http://localhost:3100/api/devices/update`,
         editDevice

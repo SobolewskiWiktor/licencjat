@@ -68,6 +68,7 @@ router.post("/update", async (req, res) => {
           Login: String(req.body.login),
           Status: String(req.body.status),
           Title: String(req.body.status),
+          Password: String(hashedPassword),
         },
       });
       res.status(200).json(updater)
@@ -78,11 +79,11 @@ router.post("/update", async (req, res) => {
   }
 });
 
-router.post("/delete", async(req,res) => {
+router.post("/delete/:id", async(req,res) => {
   try
   {
     const deleter = await prisma.users.delete({
-      where:{ID: Number(req.body.id)}
+      where:{ID: Number(req.params.id)}
     })
 
     res.status(200).json(deleter)

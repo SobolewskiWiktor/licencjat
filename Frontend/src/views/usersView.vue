@@ -22,6 +22,7 @@
                 <v-col cols="12" md="6">
                   <v-text-field
                     label="Imię"
+                    v-model="newUser.name"
                     hide-details
                     required
                   ></v-text-field>
@@ -30,6 +31,7 @@
                 <v-col cols="12" md="6">
                   <v-text-field
                     label="Nazwisko"
+                    v-model="newUser.surname"
                     hide-details
                     required
                   ></v-text-field>
@@ -39,6 +41,7 @@
                 <v-col cols="12" md="6">
                   <v-text-field
                     label="Login"
+                    v-model="newUser.login"
                     hide-details
                     required
                   ></v-text-field>
@@ -50,18 +53,20 @@
                     label="Stanowisko"
                     :items="[
                       'Administrator Aplikacji',
-                      'Administrator Infrastruktóry',
+                      'Administrator Infrastruktury',
                       'Użytkownik',
                     ]"
+                    v-model="newUser.title"
                   ></v-combobox>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="12" md="6">
                   <v-text-field
-                    label="Login"
+                    label="Hasło"
                     hide-details
                     required
+                    v-model="newUser.password"
                   ></v-text-field>
                 </v-col>
 
@@ -70,6 +75,7 @@
                     label="Hasło"
                     hide-details
                     required
+                    v-model="newUser.confirmPassowrd"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -81,7 +87,7 @@
                 text="Dodaj"
                 variant="tonal"
                 color="green"
-                @click="isActive.value = false"
+                @click.prevent="addUser()"
               ></v-btn>
               <v-btn text="Zamknij" @click="isActive.value = false"></v-btn>
             </v-card-actions>
@@ -91,15 +97,15 @@
     </div>
     <div id="usersListContent">
       <v-expansion-panels class="w-50">
-        <v-expansion-panel>
+        <v-expansion-panel v-for="(elem, index) in users" :key="index">
           <v-expansion-panel-title>
             <div id="titleContent">
-              <div id="titleBox">#1</div>
-              <div id="titleBox">Wiktor</div>
-              <div id="titleBox">Sobolewski</div>
-              <div id="titleBox">sobolwik</div>
+              <div id="titleBox">#{{elem.ID}}</div>
+              <div id="titleBox">{{ elem.Name }}</div>
+              <div id="titleBox">{{ elem.Surname }}</div>
+              <div id="titleBox">{{ elem.Login }}</div>
               <div id="titleBoxChip">
-                <v-chip color="red"> Administrator Aplikacji </v-chip>
+                <v-chip color="red"> {{ elem.Title }} </v-chip>
               </div>
             </div>
           </v-expansion-panel-title>
@@ -114,6 +120,7 @@
                     text="Edytuj"
                     variant="flat"
                     class="ml-5"
+                    @click.prevent="getEditInfo(elem.Login)"
                   ></v-btn>
                 </template>
 
@@ -126,6 +133,7 @@
                             label="Imię"
                             hide-details
                             required
+                            v-model="editUser.name"
                           ></v-text-field>
                         </v-col>
 
@@ -134,6 +142,7 @@
                             label="Nazwisko"
                             hide-details
                             required
+                            v-model="editUser.surname"
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -143,6 +152,7 @@
                             label="Login"
                             hide-details
                             required
+                            v-model="editUser.login"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6">
@@ -155,15 +165,16 @@
                               'Administrator Infrastruktóry',
                               'Użytkownik',
                             ]"
+                            v-model="editUser.title"
                           ></v-combobox>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12" md="6">
                           <v-text-field
-                            label="Login"
+                            label="Hasło"
                             hide-details
-                            required
+                            v-model="editUser.password"
                           ></v-text-field>
                         </v-col>
 
@@ -171,7 +182,7 @@
                           <v-text-field
                             label="Hasło"
                             hide-details
-                            required
+                            v-model="editUser.confirmPassowrd"
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -183,7 +194,7 @@
                         text="Edytuj"
                         variant="tonal"
                         color="green"
-                        @click="isActive.value = false"
+                        @click.prevent="updateUser()"
                       ></v-btn>
                       <v-btn
                         text="Zamknij"
@@ -207,7 +218,7 @@
 
                 <template v-slot:default="{ isActive }">
                   <v-card title="Usuwanie">
-                    <v-card-text> Czy napewno chcesz usunąć? </v-card-text>
+                    <v-card-text> Czy napewno chcesz usunąć? {{ elem.name }} </v-card-text>
 
                     <v-card-actions>
                       <v-spacer></v-spacer>
@@ -215,7 +226,7 @@
                         text="Potwierdź"
                         variant="outlined"
                         class="text-green"
-                        @click="isActive.value = false"
+                        @click.prevent="deleteUser(users[index].ID)"
                       ></v-btn>
                       <v-btn
                         text="Zamknij"
@@ -235,10 +246,66 @@
 
 <script>
 import "../styles/usersView.css";
+import axios from "axios";
 export default {
   data() {
-    return {};
+    return {
+      users: [], 
+      
+      newUser: {
+        name: "",
+        surname: "",
+        login: "",
+        password: "",
+        confirmPassowrd: "",
+        title: "",
+        status: "Aktywny"
+      },
+      editUser: {
+        id:"",
+        name: "",
+        surname: "",
+        login: "",
+        password: "",
+        confirmPassowrd: "",
+        title: "",
+        status: "",
+      }
+    };
   },
-  methods: {},
+  methods: {
+    async getUsers()
+    {
+      const getter = await axios.get(`http://localhost:3100/api/users/getAll`)
+      this.users = getter.data
+    },
+    async addUser()
+    {
+      const adder = await axios.post(`http://localhost:3100/api/users/create`, this.newUser)
+      this.getUsers()
+    },
+    async deleteUser(userID)
+    {
+       const deleter = await axios.post(`http://localhost:3100/api/users/delete/${userID}`)
+       this.getUsers();
+    },
+    async getEditInfo(userLogin)
+    {
+        const getter = await axios.get(`http://localhost:3100/api/users/getUserData/${userLogin}`)
+        this.editUser.id = getter.data.ID;
+        this.editUser.name = getter.data.Name;
+        this.editUser.surname = getter.data.Surname;
+        this.editUser.login = getter.data.Login;
+        this.editUser.title = getter.data.Title;
+        this.editUser.status = getter.data.Status;
+    },
+    async updateUser() {
+      const updater = await axios.post(`http://localhost:3100/api/users/update`, this.editUser)
+      this.getUsers();
+    }
+  },
+  mounted() {
+    this.getUsers();
+  }
 };
 </script>
